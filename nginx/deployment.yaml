@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: hello-nginx
-        image: cara/cara-hello-nginx:v1
+        image: cara/cara-hello-nginx:v2
         ports:
         - containerPort: 80
