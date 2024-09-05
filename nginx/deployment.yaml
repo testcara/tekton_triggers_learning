@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-nginx
+  labels:
+    app: hello-nginx
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: hello-nginx
+  template:
+    metadata:
+      labels:
+        run: hello-nginx
+    spec:
+      containers:
+      - name: hello-nginx
+        image: cara/cara-hello-nginx:v1
+        ports:
+        - containerPort: 80
