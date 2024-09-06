@@ -17,3 +17,5 @@ spec:
       value: docker.io/cara/cara-pipeline-base:V1
     - name: test_base_image
       value: centos:7
+    - name: docker_build_base_image
+      value: docker.io/cara/my-dind-docker:latest

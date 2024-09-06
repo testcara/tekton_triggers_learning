@@ -44,11 +44,21 @@ spec:
         - name: base_image
           value: $(params.test_base_image)
     - name: build
+      taskRef:
+        name: build
       runAfter:
         - test
       workspaces:
         - name: output
           workspace: git-repo-pvc
+      params:
+        - name: base_image
+          value: $(params.docker_build_base_image)
+    - name: push
+      taskRef:
+        name: push
+      runAfter:
+        - build
       params:
         - name: base_image
           value: $(params.docker_build_base_image)

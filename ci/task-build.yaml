@@ -1,0 +1,38 @@
+# task-build.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build
+  labels:
+    app.kubernetes.io/version: "0.8"
+spec:
+  workspaces:
+    - name: output
+  params:
+    - name: base_image
+      description: base_image for docker build
+      type: string
+  steps:
+    - name: build
+      image: "$(params.base_image)"
+      volumeMounts:
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
+      env:
+      - name: WORKSPACE_OUTPUT_PATH
+        value: $(workspaces.output.path)
+      script: |
+        #!/usr/bin/env sh
+        set -eu
+        whoami
+        pwd
+        cd ${WORKSPACE_OUTPUT_PATH}
+        cd tekton_triggers_learning
+        pwd
+        docker version
+        docker build . -t cara/cara-hello-nginx:latest
+  volumes:
+    - name: docker-socket
+      hostPath:
+        path: /var/run/docker.sock
+        type: Socket

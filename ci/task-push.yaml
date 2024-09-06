@@ -1,0 +1,29 @@
+# task-build.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: push
+  labels:
+    app.kubernetes.io/version: "0.8"
+spec:
+  params:
+    - name: base_image
+      description: base_image for docker build
+      type: string
+  steps:
+    - name: push
+      image: "$(params.base_image)"
+      volumeMounts:
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
+      env:
+      script: |
+        #!/usr/bin/env sh
+        set -eu
+        echo arNdkN47__ |  docker login --username cara --password-stdin
+        docker push cara/cara-hello-nginx:latest
+  volumes:
+    - name: docker-socket
+      hostPath:
+        path: /var/run/docker.sock
+        type: Socket
