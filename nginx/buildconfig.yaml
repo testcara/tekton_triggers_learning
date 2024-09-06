@@ -1,5 +1,5 @@
 kind: BuildConfig
-apiVersion: build.openshift.io/v1
+apiVersion: apps/v1
 metadata:
   name: "build-cara-nginx"
 spec:
