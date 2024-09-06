@@ -1,0 +1,45 @@
+# task-clone.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-clone
+  labels:
+    app.kubernetes.io/version: "0.8"
+spec:
+  workspaces:
+    - name: output
+      description: The git repo will be cloned into the dir
+  params:
+    - name: url
+      description: Repository URL to clone from.
+      type: string
+    - name: revision
+      description: which commit you would like to get, master or others
+      type: string
+    - name: base_image
+      description: base_image for git & unit testing
+      type: string
+  steps:
+    - name: clone
+      image: "$(params.base_image)"
+      env:
+      - name: WORKSPACE_OUTPUT_PATH
+        value: $(workspaces.output.path)
+      - name: GIT_REPO_URL
+        value: $(params.url)
+      - name: GIT_REPO_REVISION
+        value: $(params.revision)
+      script: |
+        #!/usr/bin/env sh
+        set -eu
+        whoami
+        pwd
+        cd ${WORKSPACE_OUTPUT_PATH}
+        pwd
+        rm -rf *
+        git clone ${GIT_REPO_URL}
+        repo_dir=$(echo $GIT_REPO_URL | rev  | cut -d '/' -f 1 | rev | sed 's/.git//g')
+        cd ${repo_dir}
+        pwd
+        git checkout ${GIT_REPO_REVISION}
+        ls -al

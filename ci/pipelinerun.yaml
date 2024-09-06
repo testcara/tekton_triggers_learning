@@ -1,0 +1,19 @@
+# pipelinerun.yaml
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: pipelinerun
+spec:
+  pipelineRef:
+    name: pipeline
+  workspaces:
+    - name: git-repo-pvc
+      persistentVolumeClaim:
+        claimName: git-repo-pvc
+  params:
+    - name: git_url
+      value: https://github.com/testcara/tekton_triggers_learning.git
+    - name: git_base_image
+      value: docker.io/cara/cara-pipeline-base:V1
+    - name: test_base_image
+      value: centos:7

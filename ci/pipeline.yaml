@@ -1,0 +1,54 @@
+# pipeline.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline
+spec:
+  workspaces:
+    - name: git-repo-pvc
+  params:
+    - name: git_url
+      type: string
+    - name: revision
+      type: string
+      default: main
+    - name: git_base_image
+      type: string
+    - name: test_base_image
+      type: string
+    - name: docker_build_base_image
+      type: string
+  tasks:
+    - name: clone
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: git-repo-pvc
+      params:
+        - name: url
+          value: $(params.git_url)
+        - name: revision
+          value: $(params.revision)
+        - name: base_image
+          value: $(params.git_base_image)
+    - name: test
+      taskRef:
+        name: test
+      runAfter:
+        - clone
+      workspaces:
+        - name: output
+          workspace: git-repo-pvc
+      params:
+        - name: base_image
+          value: $(params.test_base_image)
+    - name: build
+      runAfter:
+        - test
+      workspaces:
+        - name: output
+          workspace: git-repo-pvc
+      params:
+        - name: base_image
+          value: $(params.docker_build_base_image)

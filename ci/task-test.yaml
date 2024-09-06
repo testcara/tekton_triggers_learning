@@ -1,0 +1,33 @@
+# task-test.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: test
+spec:
+  workspaces:
+    - name: output
+      description: The git repo will be cloned into the dir
+  params:
+    - name: base_image
+      description: base_image for git & unit testing
+      type: string
+  steps:
+    - name: test
+      image: "$(params.base_image)"
+      env:
+      - name: WORKSPACE_OUTPUT_PATH
+        value: $(workspaces.output.path)
+      script: |
+        #!/usr/bin/env sh
+        set -eu
+        whoami
+        pwd
+        cd ${WORKSPACE_OUTPUT_PATH}
+        pwd
+        ls -al
+        if [ -e tekton_triggers_learning/Dockerfile ]
+        then
+          echo 'fake test passed'
+        else
+          exit 1
+        fi
