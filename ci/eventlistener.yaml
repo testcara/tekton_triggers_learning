@@ -1,0 +1,24 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: github-listener
+  namespace: default
+spec:
+  resources:
+    kubernetesResource:
+      serviceType: NodePort
+  serviceAccountName: github-sa
+  triggers:
+  - name: github-push-events-trigger
+    interceptors:
+    - ref:
+        name: github
+      params:
+      - name: eventTypes
+        value:
+          - Push Hook
+    bindings:
+    - ref: trigger-pipeline-binding
+    template:
+      ref: trigger-pipeline-template
+
